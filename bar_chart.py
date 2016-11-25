@@ -23,12 +23,15 @@ def Plot_Bar(value, N,x_lable,y_lable,title, Total_events):
     height = 0.0
     def autolabel(rects):
         # attach some text labels
+        i=0
         for rect in rects:
 
             height = rect.get_height()
             origin_h = height
-            height = (height/Total_events) * 100
-            ax.text(rect.get_x() + rect.get_width()/2., .95*origin_h,
+            base = (Total_events[i])
+            i=i+1
+            height = (height/base) * 100
+            ax.text(rect.get_x() + rect.get_width()/2., 1.05*origin_h,
                     '%s' % str(int(height))+"%\n"+str(origin_h),
                     ha='center', va='center', size=8)
 

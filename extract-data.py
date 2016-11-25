@@ -13,7 +13,7 @@ os.system("mkdir "+ Directory_Save_Plots)
 import random
 plt.close('all')
 NUM_RUNS = 5
-MAX_FUNC = 10 # maximum number of functions that we need to analyze
+MAX_FUNC = 15 # maximum number of functions that we need to analyze
 COUNT_EVENT = 1000 # number of events to trigger a sample
 Variants = ["Cycles"
             ,"cache-references"
@@ -70,21 +70,43 @@ def Read_Results (Raw_Data):
 Final_Dict = Read_Results("All_Data")
 
 
-j =0
+#to retrieve number of cache misses/cache references in each function!!!
 for key in Final_Dict.keys():
-    print "----------------------------------------------------------------"
+    if key.__contains__("cache-references"):
+        key_cache_references = key
+
+Total_Events = []
+j =0
+f_write = open("Events",'w')
+for key in Final_Dict.keys():
+    if key.__contains__("cache-misses"):
+        key_cache_misses = key
+    elif key.__contains__("cache-references"):
+        key_cache_references = key
+    f_write.write( "---------------------------------")
     value = []
     x_lable = []
-    print key
-    Total_Events = int(filter(str.isdigit, key))
+    f_write.write(key+"\n")
 
+    Total_Events = []
     for key_i in range(0, min (MAX_FUNC, len(Final_Dict[key]))):
-        print (Final_Dict[key])[key_i][0],((Final_Dict[key])[key_i][1])[0]
+        tmp_str = str ((Final_Dict[key])[key_i][0]) +"  "+ str (((Final_Dict[key])[key_i][1])[0]) +"\n"
+        f_write.write (tmp_str)
         value.append(((Final_Dict[key])[key_i][1])[0])
         x_lable.append(((Final_Dict[key])[key_i][0])[0:12])
+
+        if key.__contains__("cache-misses"):
+            Total_Events.append(((Final_Dict[key_cache_references])[key_i][1])[0])
+        else:
+            Total_Events.append(int(filter(str.isdigit, key)))
     y_lable = key
     title   = key
+  #  Total_Events[key] = int(filter(str.isdigit, key))
+   # if key.__contains__("cache-misses"):
+
     Plot_Bar(value,min(MAX_FUNC,len(Final_Dict[key])),x_lable, y_lable,title,Total_Events)
    # plt.show()
     plt.savefig (Directory_Save_Plots+"/"+(key)+'.png')
    # savefig('foo.png')
+f_write.close()
+

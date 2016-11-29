@@ -1,6 +1,7 @@
 import operator
 import os
 from bar_chart import Plot_Bar
+from Avg_Results import Avg_Results
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -9,11 +10,18 @@ Directory_Save_Plots = "Plots"
 os.system("rm -r "+ Directory_Save_Plots)
 os.system("mkdir "+ Directory_Save_Plots)
 
+#directory of text results
+Directory_Save_Results = "Results"
+os.system("rm -r "+ Directory_Save_Results
+          )
+os.system("mkdir "+ Directory_Save_Results)
+
+
 
 import random
 plt.close('all')
 NUM_RUNS = 5
-MAX_FUNC = 15 # maximum number of functions that we need to analyze
+MAX_FUNC = 20 # maximum number of functions that we need to analyze
 COUNT_EVENT = 1000 # number of events to trigger a sample
 Variants = ["Cycles"
             ,"cache-references"
@@ -31,6 +39,19 @@ Variants = ["Cycles"
          #   ,"LLC-stores"
 ]
 
+#print the dictionary which consists of all of the results
+def Print_All_Results(Final_Dict):
+    f_write = open("Avg_Results", 'w')
+    for key in Final_Dict.keys():
+
+        f_write.write("--- ")
+        f_write.write(key + "\n")
+        # for less amount of functions, we can use "min" in the range!!!
+        for key_i in range(0, min(MAX_FUNC, len(Final_Dict[key]))):
+            tmp_str = str((Final_Dict[key])[key_i][0]) + "  " + str(((Final_Dict[key])[key_i][1])[0]) + "\n"
+            f_write.write(tmp_str)
+
+#def Plot_One_Parameter ():
 
 def Read_Results (Raw_Data):
     newDict = {}
@@ -47,7 +68,7 @@ def Read_Results (Raw_Data):
                    i = i+1
                else:
                    Final_Dict[new_paramter] = sorted_x
-               print line
+               #print line
                splitline = line.split() # ex:   Samples: 11K of event 'cycles:u'
                # new parameters that we have the samples!!!
                new_paramter =  splitline[-1][1:-3]
@@ -63,50 +84,71 @@ def Read_Results (Raw_Data):
                func = {splitline[-1]: [int(splitline[2])]}
                RetDict [splitline[-1]] = [int(splitline[2])]
                sorted_x = sorted(RetDict.items(), key=operator.itemgetter(1), reverse=True)
+
        # last paramtere!
        Final_Dict[new_paramter] = sorted_x
     return Final_Dict
 
-Final_Dict = Read_Results("All_Data")
+def Single_Run(Num_Run):
+    Final_Dict = Read_Results("All_Data")
 
-
-#to retrieve number of cache misses/cache references in each function!!!
-for key in Final_Dict.keys():
-    if key.__contains__("cache-references"):
-        key_cache_references = key
-
-Total_Events = []
-j =0
-f_write = open("Events",'w')
-for key in Final_Dict.keys():
-    if key.__contains__("cache-misses"):
-        key_cache_misses = key
-    elif key.__contains__("cache-references"):
-        key_cache_references = key
-    f_write.write( "---------------------------------")
-    value = []
-    x_lable = []
-    f_write.write(key+"\n")
+    # to retrieve number of cache misses/cache references in each function!!!
+    for key in Final_Dict.keys():
+        if key.__contains__("cache-references"):
+            key_cache_references = key
 
     Total_Events = []
-    for key_i in range(0, min (MAX_FUNC, len(Final_Dict[key]))):
-        tmp_str = str ((Final_Dict[key])[key_i][0]) +"  "+ str (((Final_Dict[key])[key_i][1])[0]) +"\n"
-        f_write.write (tmp_str)
-        value.append(((Final_Dict[key])[key_i][1])[0])
-        x_lable.append(((Final_Dict[key])[key_i][0])[0:12])
-
+    j = 0
+    write_dir = Directory_Save_Results+"/"+"Events_"+str(Num_Run)
+    f_write = open(write_dir, 'w')
+    f_write.write("Maximum number of functions to analysis " + str(MAX_FUNC) + "\n")
+    for key in Final_Dict.keys():
         if key.__contains__("cache-misses"):
-            Total_Events.append(((Final_Dict[key_cache_references])[key_i][1])[0])
-        else:
-            Total_Events.append(int(filter(str.isdigit, key)))
-    y_lable = key
-    title   = key
-  #  Total_Events[key] = int(filter(str.isdigit, key))
-   # if key.__contains__("cache-misses"):
+            key_cache_misses = key
+        elif key.__contains__("cache-references"):
+            key_cache_references = key
+        f_write.write("--- ")
+        value = []
+        x_lable = []
+        f_write.write(key + "\n")
 
-    Plot_Bar(value,min(MAX_FUNC,len(Final_Dict[key])),x_lable, y_lable,title,Total_Events)
-   # plt.show()
-    plt.savefig (Directory_Save_Plots+"/"+(key)+'.png')
-   # savefig('foo.png')
-f_write.close()
+        Total_Events = []
+
+        # for less amount of functions, we can use "min" in the range!!!
+        for key_i in range(0, min(MAX_FUNC, len(Final_Dict[key]))):
+            tmp_str = str((Final_Dict[key])[key_i][0]) + "  " + str(((Final_Dict[key])[key_i][1])[0]) + "\n"
+            f_write.write(tmp_str)
+            value.append(((Final_Dict[key])[key_i][1])[0])
+            x_lable.append(((Final_Dict[key])[key_i][0])[0:12])
+
+            if key.__contains__("cache-misses"):
+                Total_Events.append(((Final_Dict[key_cache_references])[key_i][1])[0])
+            else:
+                Total_Events.append(int(filter(str.isdigit, key)))
+        y_lable = key
+        title = key
+        #  Total_Events[key] = int(filter(str.isdigit, key))
+        # if key.__contains__("cache-misses"):
+
+        #Plot_Bar(value, min(MAX_FUNC, len(Final_Dict[key])), x_lable, y_lable, title, Total_Events)
+
+        plt.savefig(Directory_Save_Plots + "/" + (key) + '.png')
+        # savefig('foo.png')
+    f_write.close()
+    return Final_Dict
+
+
+OBJ_FILE = "~/Dropbox/UCI/newhope-20160815/ref/test/test_newhope"
+To_Profile = "cycles:u,instructions:u,cache-references:u,cache-misses:u"
+Avg = {}
+os.system("sudo rm All_Data*")
+for i in range (0 , NUM_RUNS):
+    os.system("sudo perf record -e cycles:u,instructions:u,cache-references:u,cache-misses:u -g -c 1000 ../test/test_newhope")
+    os.system("sudo perf report -n > All_Data")
+    Final_Dict = Single_Run(i) # finla dict: the results which are written into the "Event" file
+    print "Round "+str(i)+" is done"
+
+   #for iteration number 0, we shoud create the dictionary
+    Avg = Avg_Results(Final_Dict,i,Avg)
+Print_All_Results (Avg)
 

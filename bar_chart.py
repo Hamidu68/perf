@@ -27,7 +27,7 @@ def Plot_Bar(value, N,x_lable,y_lable,title, Total_events):
         for rect in rects:
 
             height = rect.get_height()
-            origin_h = height
+            origin_h = int(height)
             base = (Total_events[i])
             i=i+1
             height = (height/base) * 100

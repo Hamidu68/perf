@@ -51,7 +51,51 @@ def Print_All_Results(Final_Dict):
             tmp_str = str((Final_Dict[key])[key_i][0]) + "  " + str(((Final_Dict[key])[key_i][1])[0]) + "\n"
             f_write.write(tmp_str)
 
-#def Plot_One_Parameter ():
+def Plot_All_Parameters (Final_Dict):
+    for key in Final_Dict.keys():
+        if key.__contains__("cache-references"):
+            key_cache_references = key
+            break
+
+    Total_Events = []
+    j = 0
+    #write_dir = Directory_Save_Results+"/"+"Events_"+str(Num_Run)
+    #f_write = open(write_dir, 'w')
+    #f_write.write("Maximum number of functions to analysis " + str(MAX_FUNC) + "\n")
+    for key in Final_Dict.keys():
+        if key.__contains__("cache-misses"):
+            key_cache_misses = key
+        elif key.__contains__("cache-references"):
+            key_cache_references = key
+        #f_write.write("--- ")
+        value = []
+        x_lable = []
+
+        Total_Events = []
+
+        # for less amount of functions, we can use "min" in the range!!!
+        for key_i in range(0, min(MAX_FUNC, len(Final_Dict[key]))):
+
+            #ex: montgomery_reduce  73
+            tmp_str = str((Final_Dict[key])[key_i][0]) + "  " + str(((Final_Dict[key])[key_i][1])[0]) + "\n"
+
+            value.append(((Final_Dict[key])[key_i][1])[0])
+            x_lable.append(((Final_Dict[key])[key_i][0])[0:12])
+
+            if key.__contains__("cache-misses"):
+                Total_Events.append(((Final_Dict[key_cache_references])[key_i][1])[0])
+            else:
+                Total_Events.append(int(filter(str.isdigit, key)))
+        y_lable = key
+        title = key
+        #  Total_Events[key] = int(filter(str.isdigit, key))
+        # if key.__contains__("cache-misses"):
+
+        Plot_Bar(value, min(MAX_FUNC, len(Final_Dict[key])), x_lable, y_lable, title, Total_Events)
+
+        plt.savefig(Directory_Save_Plots + "/" + (key) + '.png')
+        # savefig('foo.png')
+
 
 def Read_Results (Raw_Data):
     newDict = {}
@@ -96,59 +140,34 @@ def Single_Run(Num_Run):
     for key in Final_Dict.keys():
         if key.__contains__("cache-references"):
             key_cache_references = key
-
-    Total_Events = []
     j = 0
     write_dir = Directory_Save_Results+"/"+"Events_"+str(Num_Run)
     f_write = open(write_dir, 'w')
     f_write.write("Maximum number of functions to analysis " + str(MAX_FUNC) + "\n")
     for key in Final_Dict.keys():
-        if key.__contains__("cache-misses"):
-            key_cache_misses = key
-        elif key.__contains__("cache-references"):
-            key_cache_references = key
-        f_write.write("--- ")
-        value = []
-        x_lable = []
+        f_write.write("-----------------")
         f_write.write(key + "\n")
-
-        Total_Events = []
-
         # for less amount of functions, we can use "min" in the range!!!
         for key_i in range(0, min(MAX_FUNC, len(Final_Dict[key]))):
             tmp_str = str((Final_Dict[key])[key_i][0]) + "  " + str(((Final_Dict[key])[key_i][1])[0]) + "\n"
             f_write.write(tmp_str)
-            value.append(((Final_Dict[key])[key_i][1])[0])
-            x_lable.append(((Final_Dict[key])[key_i][0])[0:12])
-
-            if key.__contains__("cache-misses"):
-                Total_Events.append(((Final_Dict[key_cache_references])[key_i][1])[0])
-            else:
-                Total_Events.append(int(filter(str.isdigit, key)))
-        y_lable = key
-        title = key
-        #  Total_Events[key] = int(filter(str.isdigit, key))
-        # if key.__contains__("cache-misses"):
-
-        #Plot_Bar(value, min(MAX_FUNC, len(Final_Dict[key])), x_lable, y_lable, title, Total_Events)
-
-        plt.savefig(Directory_Save_Plots + "/" + (key) + '.png')
-        # savefig('foo.png')
     f_write.close()
+    #Plot_All_Parameters(Final_Dict)
     return Final_Dict
-
 
 OBJ_FILE = "~/Dropbox/UCI/newhope-20160815/ref/test/test_newhope"
 To_Profile = "cycles:u,instructions:u,cache-references:u,cache-misses:u"
 Avg = {}
-os.system("sudo rm All_Data*")
+Avg_Events = {}
+#os.system("sudo rm All_Data*")
 for i in range (0 , NUM_RUNS):
-    os.system("sudo perf record -e cycles:u,instructions:u,cache-references:u,cache-misses:u -g -c 1000 ../test/test_newhope")
-    os.system("sudo perf report -n > All_Data")
+    #os.system("sudo perf record -e cycles:u,instructions:u,cache-references:u,cache-misses:u -g -c 1000 ../test/test_newhope")
+  #  os.system("sudo perf report -n > All_Data")
     Final_Dict = Single_Run(i) # finla dict: the results which are written into the "Event" file
     print "Round "+str(i)+" is done"
 
    #for iteration number 0, we shoud create the dictionary
-    Avg = Avg_Results(Final_Dict,i,Avg)
+    [Avg, Avg_Events] = Avg_Results(Final_Dict,i,Avg,Avg_Events)
 Print_All_Results (Avg)
-
+print Avg_Events
+#Plot_All_Parameters(Avg)

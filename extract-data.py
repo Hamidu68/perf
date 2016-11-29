@@ -40,7 +40,7 @@ Variants = ["Cycles"
 ]
 
 #print the dictionary which consists of all of the results
-def Print_All_Results(Final_Dict):
+def Print_All_Results(Final_Dict): #IS_Avg == 1: we need to plot average results, so Total_Events should be average!
     f_write = open("Avg_Results", 'w')
     for key in Final_Dict.keys():
 
@@ -51,7 +51,7 @@ def Print_All_Results(Final_Dict):
             tmp_str = str((Final_Dict[key])[key_i][0]) + "  " + str(((Final_Dict[key])[key_i][1])[0]) + "\n"
             f_write.write(tmp_str)
 
-def Plot_All_Parameters (Final_Dict):
+def Plot_All_Parameters (Final_Dict,Is_Avg,Avg_Events):
     for key in Final_Dict.keys():
         if key.__contains__("cache-references"):
             key_cache_references = key
@@ -82,10 +82,18 @@ def Plot_All_Parameters (Final_Dict):
             value.append(((Final_Dict[key])[key_i][1])[0])
             x_lable.append(((Final_Dict[key])[key_i][0])[0:12])
 
+
+
             if key.__contains__("cache-misses"):
-                Total_Events.append(((Final_Dict[key_cache_references])[key_i][1])[0])
+               if Is_Avg == 1:
+                    Total_Events.append((Final_Dict[key_cache_references])[key_i][1][0])
+               else:
+                    Total_Events.append((Final_Dict[key_cache_references])[0][1][0])
             else:
-                Total_Events.append(int(filter(str.isdigit, key)))
+                if Is_Avg == 1:
+                    Total_Events.append(Avg_Events[key])
+                else:
+                    Total_Events.append(int(filter(str.isdigit, key)))
         y_lable = key
         title = key
         #  Total_Events[key] = int(filter(str.isdigit, key))
@@ -94,7 +102,7 @@ def Plot_All_Parameters (Final_Dict):
         Plot_Bar(value, min(MAX_FUNC, len(Final_Dict[key])), x_lable, y_lable, title, Total_Events)
 
         plt.savefig(Directory_Save_Plots + "/" + (key) + '.png')
-        # savefig('foo.png')
+
 
 
 def Read_Results (Raw_Data):
@@ -170,4 +178,4 @@ for i in range (0 , NUM_RUNS):
     [Avg, Avg_Events] = Avg_Results(Final_Dict,i,Avg,Avg_Events)
 Print_All_Results (Avg)
 print Avg_Events
-#Plot_All_Parameters(Avg)
+Plot_All_Parameters(Avg,1,Avg_Events)

@@ -167,10 +167,10 @@ OBJ_FILE = "~/Dropbox/UCI/newhope-20160815/ref/test/test_newhope"
 To_Profile = "cycles:u,instructions:u,cache-references:u,cache-misses:u"
 Avg = {}
 Avg_Events = {}
-#os.system("sudo rm All_Data*")
+os.system("sudo rm All_Data*")
 for i in range (0 , NUM_RUNS):
-    #os.system("sudo perf record -e cycles:u,instructions:u,cache-references:u,cache-misses:u -g -c 1000 ../test/test_newhope")
-  #  os.system("sudo perf report -n > All_Data")
+    os.system("sudo perf record -e cycles:u,instructions:u,cache-references:u,cache-misses:u -g -c 1000 ../test/test_newhope")
+    os.system("sudo perf report -n > All_Data")
     Final_Dict = Single_Run(i) # finla dict: the results which are written into the "Event" file
     print "Round "+str(i)+" is done"
 

@@ -1,2 +1,8 @@
 perf.data
 perf.data.old
+test/
+profiling/
+Results*/
+Plot*/
+
+

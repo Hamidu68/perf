@@ -20,7 +20,7 @@ os.system("mkdir "+ Directory_Save_Results)
 
 import random
 plt.close('all')
-NUM_RUNS = 5
+NUM_RUNS = 100
 MAX_FUNC = 20 # maximum number of functions that we need to analyze
 COUNT_EVENT = 1000 # number of events to trigger a sample
 Variants = ["Cycles"
@@ -95,7 +95,7 @@ def Plot_All_Parameters (Final_Dict,Is_Avg,Avg_Events):
                 else:
                     Total_Events.append(int(filter(str.isdigit, key)))
         y_lable = key
-        title = key
+        title = key+ str (Avg_Events[key])
         #  Total_Events[key] = int(filter(str.isdigit, key))
         # if key.__contains__("cache-misses"):
 

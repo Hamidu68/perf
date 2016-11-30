@@ -1,5 +1,5 @@
 import operator
-def Read_Func(function,file):
+def Read_Func_Annotate(function,file):
     #end of the function ==> specified by "Percent"!!
     newDict = {}
     next_line = file.next()
@@ -19,28 +19,38 @@ def Read_Func(function,file):
         next_line = file.next()
     return newDict
 
-def Read_Results (Raw_Data):
+def Read_Results_Annotate (Raw_Data):
     newDict = {}
     RetDict = {}
     Final_Dict = {}
     new_paramter = ""
     sorted_x = {}
     i = 0
+
+    #read desired functions
+    functions = []
+    func_read_file = open("functions.txt", 'r')
+    for line in func_read_file:
+        line = line.replace("\n", "")
+        functions.append(line)
+    Funcions_Dict = {}#contain each function's
     with open(Raw_Data, 'r') as f:
        for line in f:
            #there is a new function!!!
            if line.__contains__(">:"):
                function = (f.next().split()[1])[0:-3] # ==> eliminate "():" and extract func's name
+
+               #if function is not in the list of desired functions, skip it!
+               if not function in functions:
+                   continue
                nextline = f.next()
                while not nextline.__contains__("{"): # wait to reach start of the function
                    nextline = f.next()
                    continue
-               else:
-                   #extract each function's details.
-                   stats = Read_Func(function,f)
+               else: #extract each function's details.
+                   stats = Read_Func_Annotate(function,f)
                    stats = sorted(stats.items(), key=operator.itemgetter(1), reverse=True)
-                   print function
-                   print stats
-               #print line
+                   Funcions_Dict[function] = stats
 
-Read_Results("hamid")
+    print Funcions_Dict
+Read_Results_Annotate("hamid.txt")

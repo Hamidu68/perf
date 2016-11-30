@@ -25,3 +25,5 @@ plt.setp([a.get_yticklabels() for a in axarr[:, 1]], visible=False)
 
 
 plt.show()
+
+

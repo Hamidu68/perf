@@ -20,7 +20,7 @@ os.system("mkdir "+ Directory_Save_Results)
 
 import random
 plt.close('all')
-NUM_RUNS = 100
+NUM_RUNS = 5
 MAX_FUNC = 20 # maximum number of functions that we need to analyze
 COUNT_EVENT = 1000 # number of events to trigger a sample
 Variants = ["Cycles"
@@ -61,7 +61,9 @@ def Plot_All_Parameters (Final_Dict,Is_Avg,Avg_Events):
     j = 0
     #write_dir = Directory_Save_Results+"/"+"Events_"+str(Num_Run)
     #f_write = open(write_dir, 'w')
-    #f_write.write("Maximum number of functions to analysis " + str(MAX_FUNC) + "\n")
+    #f_write.write("Maximum number of functions to analysis " + str(MAX_FUNC) + "\n")++
+    file_func = open("functions.txt",'w')
+
     for key in Final_Dict.keys():
         if key.__contains__("cache-misses"):
             key_cache_misses = key
@@ -81,6 +83,10 @@ def Plot_All_Parameters (Final_Dict,Is_Avg,Avg_Events):
 
             value.append(((Final_Dict[key])[key_i][1])[0])
             x_lable.append(((Final_Dict[key])[key_i][0])[0:12])
+
+            #print functions : used in annotation!!
+            if key.__contains__("cycles"):
+                file_func.write ((Final_Dict[key])[key_i][0]+"\n")
 
 
 
@@ -103,7 +109,7 @@ def Plot_All_Parameters (Final_Dict,Is_Avg,Avg_Events):
 
         plt.savefig(Directory_Save_Plots + "/" + (key) + '.png')
 
-
+    file_func.close()
 
 def Read_Results (Raw_Data):
     newDict = {}
@@ -141,8 +147,8 @@ def Read_Results (Raw_Data):
        Final_Dict[new_paramter] = sorted_x
     return Final_Dict
 
-def Single_Run(Num_Run):
-    Final_Dict = Read_Results("All_Data")
+def Single_Run(Num_Run, All_Data):
+    Final_Dict = Read_Results(All_Data)
 
     # to retrieve number of cache misses/cache references in each function!!!
     for key in Final_Dict.keys():
@@ -167,11 +173,12 @@ OBJ_FILE = "~/Dropbox/UCI/newhope-20160815/ref/test/test_newhope"
 To_Profile = "cycles:u,instructions:u,cache-references:u,cache-misses:u"
 Avg = {}
 Avg_Events = {}
-os.system("sudo rm All_Data*")
+All_Data = "All_Data.txt"
+#os.system("sudo rm *.txt")
 for i in range (0 , NUM_RUNS):
-    os.system("sudo perf record -e cycles:u,instructions:u,cache-references:u,cache-misses:u -g -c 1000 ../test/test_newhope")
-    os.system("sudo perf report -n > All_Data")
-    Final_Dict = Single_Run(i) # finla dict: the results which are written into the "Event" file
+   # os.system("sudo perf record -e cycles:u,instructions:u,cache-references:u,cache-misses:u -g -c 1000 ../test/test_newhope")
+   # os.system("sudo perf report -n > "+ All_Data)
+    Final_Dict = Single_Run(i,All_Data) # finla dict: the results which are written into the "Event" file
     print "Round "+str(i)+" is done"
 
    #for iteration number 0, we shoud create the dictionary

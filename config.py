@@ -23,7 +23,28 @@ Variants = ["cycles"
          #   ,"LLC-stores"
 ]
 
-
+# functions = [
+#     "montgomery_reduce",
+#     "ntt",
+#     "crypto_core_chacha20",
+#     "poly_getnoise",
+#     "KeccakF1600_StatePermute",
+#     "barrett_reduce"
+#     "store_littleendian",
+#     "g",
+#     "load_littleendian",
+#     "poly_uniform",
+#     "store64",
+#     "poly_frombytes",
+#     "mul_coefficients",
+#     "poly_tobytes",
+#     "crypto_stream_chacha20",
+#     "abs",
+#     "poly_pointwise",
+#     "f",
+#     "rec",
+#     "load64"
+# ]
 
 BENCH_DIR = "~/Desktop/hope/newhope/ref/test/test_newhope"
 BNECH_NAME = "newhope"

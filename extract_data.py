@@ -1,43 +1,5 @@
-import operator
-import os
+from config import *
 from bar_chart import Plot_Bar
-from Avg_Results import Avg_Results
-import numpy as np
-import matplotlib.pyplot as plt
-
-#directory for plots
-Directory_Save_Plots = "Plots"
-os.system("rm -r "+ Directory_Save_Plots)
-os.system("mkdir "+ Directory_Save_Plots)
-
-#directory of text results
-Directory_Save_Results = "Results"
-os.system("rm -r "+ Directory_Save_Results
-          )
-os.system("mkdir "+ Directory_Save_Results)
-
-
-
-import random
-plt.close('all')
-NUM_RUNS = 5
-MAX_FUNC = 20 # maximum number of functions that we need to analyze
-COUNT_EVENT = 1000 # number of events to trigger a sample
-Variants = ["Cycles"
-            ,"cache-references"
-            ,"cache-misses"
-            ,"instructions"
-         #   ,"branches"
-         #   ,"branch-misses"
-         #   ,"L1-dcache-load-misses"
-         #   ,"L1-dcache-loads"
-         #   ,"L1-dcache-stores"
-         #   ,"L1-icache-load-misses"
-         #   ,"LLC-load-misses"
-         #   ,"LLC-loads"
-         #   ,"LLC-store-misses"
-         #   ,"LLC-stores"
-]
 
 #print the dictionary which consists of all of the results
 def Print_All_Results(Final_Dict): #IS_Avg == 1: we need to plot average results, so Total_Events should be average!
@@ -168,21 +130,3 @@ def Single_Run(Num_Run, All_Data):
     f_write.close()
     #Plot_All_Parameters(Final_Dict)
     return Final_Dict
-
-OBJ_FILE = "~/Dropbox/UCI/newhope-20160815/ref/test/test_newhope"
-To_Profile = "cycles:u,instructions:u,cache-references:u,cache-misses:u"
-Avg = {}
-Avg_Events = {}
-All_Data = "All_Data.txt"
-#os.system("sudo rm *.txt")
-for i in range (0 , NUM_RUNS):
-   # os.system("sudo perf record -e cycles:u,instructions:u,cache-references:u,cache-misses:u -g -c 1000 ../test/test_newhope")
-   # os.system("sudo perf report -n > "+ All_Data)
-    Final_Dict = Single_Run(i,All_Data) # finla dict: the results which are written into the "Event" file
-    print "Round "+str(i)+" is done"
-
-   #for iteration number 0, we shoud create the dictionary
-    [Avg, Avg_Events] = Avg_Results(Final_Dict,i,Avg,Avg_Events)
-Print_All_Results (Avg)
-print Avg_Events
-Plot_All_Parameters(Avg,1,Avg_Events)

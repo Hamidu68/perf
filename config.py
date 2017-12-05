@@ -52,8 +52,8 @@ ToProfile = "cycles:u,instructions:u,cache-references:u,cache-misses:u"
 CMD = "sudo perf record -e " + ToProfile + " -g -c "+ str(COUNT_EVENT)+ " " + BENCH_DIR
 
 #directory of text results
-Directory_Save_Results = "Results/"+BNECH_NAME
+Directory_Save_Results = "results/"+BNECH_NAME
 
 #directory for plots
-#Directory_Save_Plots = "Plots/"+BNECH_NAME
+#Directory_Save_Plots = "plots/"+BNECH_NAME
 Directory_Save_Plots = Directory_Save_Results

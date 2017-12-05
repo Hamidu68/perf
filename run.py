@@ -4,11 +4,10 @@ from Avg_Results import Avg_Results
 from config import *
 from extract_data import *
 
-
-os.system("rm -r "+ Directory_Save_Plots)
+os.system("mkdir -p results")
+os.system("rm -rf "+ Directory_Save_Plots)
 os.system("mkdir "+ Directory_Save_Plots)
-os.system("rm -r "+ Directory_Save_Results)
-os.system("mkdir "+ Directory_Save_Results)
+os.system("sudo rm -f perf.data*")
 
 import random
 plt.close('all')
@@ -31,6 +30,6 @@ print Avg_Events
 Plot_All_Parameters(Avg,1,Avg_Events)
 
 os.system("cp "+BENCH_DIR + " " + Directory_Save_Results )#save the obj file for the future!
-#os.system("sudo rm *.txt")
-os.system("sudo rm Avg_Results")
-os.system("sudo rm perf.data*")
+os.system("cp functions.txt "+ Directory_Save_Results )#save the obj file for the future!
+os.system("sudo rm -f perf.data*")
+os.system("sudo rm -f *.txt")

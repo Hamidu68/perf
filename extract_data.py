@@ -69,7 +69,7 @@ def Plot_All_Parameters (Final_Dict,Is_Avg,Avg_Events):
 
         Plot_Bar(value, min(MAX_FUNC, len(Final_Dict[key])), x_lable, y_lable, title, Total_Events)
 
-        plt.savefig(Directory_Save_Plots + "/" + (key) + '.png')
+        plt.savefig(Directory_Save_Plots + "/" + (key) + '.pdf',format='eps', dpi=1000)
 
     file_func.close()
 

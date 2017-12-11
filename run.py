@@ -25,11 +25,13 @@ for i in range (0 , NUM_RUNS):
 
    #for iteration number 0, we shoud create the dictionary
    [Avg, Avg_Events] = Avg_Results(Final_Dict,i,Avg,Avg_Events)
+   os.system("cp stdout.gz" + " " + Directory_Save_Results + "/stdout_"+str(i)+".gz" ) #save the stdout
 Print_All_Results (Avg)
 print Avg_Events
 Plot_All_Parameters(Avg,1,Avg_Events)
 
+
 os.system("cp "+BENCH_DIR + " " + Directory_Save_Results )#save the obj file for the future!
 os.system("cp functions.txt "+ Directory_Save_Results )#save the obj file for the future!
 os.system("sudo rm -f perf.data*")
-os.system("sudo rm -f *.txt")
+os.system("sudo rm -f *.txt *.gz")

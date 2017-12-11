@@ -46,10 +46,10 @@ Variants = ["cycles"
 #     "load64"
 # ]
 
-BENCH_DIR = "~/Desktop/hope/newhope/ref/test/test_newhope"
-BNECH_NAME = "newhope"
-ToProfile = "cycles:u,instructions:u,cache-references:u,cache-misses:u"
-CMD = "sudo perf record -e " + ToProfile + " -g -c "+ str(COUNT_EVENT)+ " " + BENCH_DIR
+BENCH_DIR = "/home/hamid/phd/pqc/bliss/bliss" #address to ob file
+BNECH_NAME = "bliss"
+ToProfile = "cycles:u"#,instructions:u,cache-references:u,cache-misses:u"
+CMD = "sudo perf record -e " + ToProfile + " -g -c "+ str(COUNT_EVENT)+ " " + BENCH_DIR + " gzip -c > stdout.gz"
 
 #directory of text results
 Directory_Save_Results = "results/"+BNECH_NAME

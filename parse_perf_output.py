@@ -45,8 +45,8 @@ def parse_perf_output (Raw_Data,threshold):
                        line=f.next()
                    n_dash = line.count("|") #dashes after the function
                    line = f.next()
-                   if float(percent[:-1]) >= threshold :
-                       list_nodes.append(Node(name, percent, dash, n_dash))
+                   #if float(percent[:-1]) >= threshold :
+                   list_nodes.append(Node(name, percent, n_dash, dash))
     return list_nodes
 
 
@@ -54,6 +54,11 @@ def build_tree(list_nodes):
     list_prev =[]
     i=0;
     prev_index=0
+
+    #first node should be the main()
+    list_nodes.insert(0,Node("main","100",0,0))
+    list_prev.append(list_nodes[0])
+
     while (i < len(list_nodes)-1):
         current = list_nodes[i]
         next = list_nodes[i+1]
@@ -64,14 +69,24 @@ def build_tree(list_nodes):
             if (current.dash < next.dash):
                 list_nodes[i].kids.append(next)
                 list_prev.append(current)
-            elif (current.dash == current.dash):
+            elif (current.dash == next.dash):
                 list_nodes[index[0]].kids.append(next)
+            else:
+                print("error1! unhandeled situation!")
         elif (current.n_dash == next.n_dash):
             if (current.dash < next.dash):
                 list_nodes[i].kids.append(next)
                 list_prev.append(current)
             elif (current.dash == next.dash): # do not change the prev
-                list_nodes[i].kids.append(next)
+                if (current.dash < current.n_dash):
+                    list_nodes[i].kids.append(next)
+                elif (current.dash == current.n_dash):
+                    list_nodes[index[0]].kids.append(next)
+                else:
+                    print ("error2! unhandeled situation!")
+            else:
+                list_nodes[index[0]].kids.append(next)
+                list_prev.pop()
         elif (current.n_dash > next.n_dash):
             if (current.dash > next.dash):
                 list_nodes[index[0]].kids.append(next)
@@ -81,13 +96,13 @@ def build_tree(list_nodes):
         i = i+1
 
 
-file = "/home/hamid/phd/profiling/perf/All_Data.txt"
-list_nodes = parse_perf_output(file,0.10)
-build_tree(list_nodes)
-for node in list_nodes:
-    print(node.name+":", end='')
-    for kid in node.kids:
-        print (kid.name+", ",end='')
-    print ("")
-
-vis_call_graph(list_nodes, 'test')
+# file = "/home/hamid/phd/profiling/perf/All_Data.txt"
+# list_nodes = parse_perf_output(file,0.10)
+# build_tree(list_nodes)
+# for node in list_nodes:
+#     print(node.name+":", end='')
+#     for kid in node.kids:
+#         print (kid.name+", ",end='')
+#     print ("")
+#
+# vis_call_graph(list_nodes, 'test')

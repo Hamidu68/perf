@@ -15,7 +15,7 @@ def vis_call_graph(call_tree, fname):
         for callee in caller.kids:
             f.edge(caller.name,callee.name,callee.percent)
 
-    f.view()
+ #   f.view()
     f.render()
 
 #vis_call_graph(call_tree, 'test')

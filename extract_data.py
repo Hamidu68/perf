@@ -1,5 +1,7 @@
+from parse_perf_output import parse_perf_output, build_tree, vis_call_graph
 from config import *
 from bar_chart import Plot_Bar
+THRESHOLD = 0.10 # function with less that threshold will not be considered
 
 #print the dictionary which consists of all of the results
 def Print_All_Results(Final_Dict): #IS_Avg == 1: we need to plot average results, so Total_Events should be average!
@@ -13,7 +15,7 @@ def Print_All_Results(Final_Dict): #IS_Avg == 1: we need to plot average results
             tmp_str = str((Final_Dict[key])[key_i][0]) + "  " + str(((Final_Dict[key])[key_i][1])[0]) + "\n"
             f_write.write(tmp_str)
 
-def Plot_All_Parameters (Final_Dict,Is_Avg,Avg_Events):
+def Plot_All_Parameters (Final_Dict,Is_Avg,Avg_Events,Directory_Save_Plots):
     for key in Final_Dict.keys():
         if key.__contains__("cache-references"):
             key_cache_references = key
@@ -73,7 +75,7 @@ def Plot_All_Parameters (Final_Dict,Is_Avg,Avg_Events):
 
     file_func.close()
 
-def Read_Results (Raw_Data):
+def Read_Results (Raw_Data,COUNT_EVENT):
     newDict = {}
     RetDict = {}
     Final_Dict = {}
@@ -109,8 +111,8 @@ def Read_Results (Raw_Data):
        Final_Dict[new_paramter] = sorted_x
     return Final_Dict
 
-def Single_Run(Num_Run, All_Data):
-    Final_Dict = Read_Results(All_Data)
+def Single_Run(Num_Run, All_Data,Directory_Save_Results,COUNT_EVENT):
+    Final_Dict = Read_Results(All_Data,COUNT_EVENT)
 
     # to retrieve number of cache misses/cache references in each function!!!
     for key in Final_Dict.keys():
@@ -129,4 +131,10 @@ def Single_Run(Num_Run, All_Data):
             f_write.write(tmp_str)
     f_write.close()
     #Plot_All_Parameters(Final_Dict)
+
+    list_nodes = parse_perf_output("All_Data.txt", THRESHOLD)
+    build_tree(list_nodes)
+    vis_call_graph(list_nodes, write_dir+"_graph")
+
+
     return Final_Dict

@@ -53,7 +53,6 @@ def parse_perf_output (Raw_Data,threshold):
 def build_tree(list_nodes):
     list_prev =[]
     i=0;
-    prev_index=0
 
     #first node should be the main()
     list_nodes.insert(0,Node("main","100",0,0))

@@ -12,10 +12,10 @@ def vis_call_graph(call_tree, fname):
     f.node_attr.update(color='lightblue2', style='filled')
 
     for caller in call_tree: #key is the caller function
-        for callee in call_tree[caller]:
-            f.edge(caller,callee[0],label=str(callee[1]))
+        for callee in caller.kids:
+            f.edge(caller.name,callee.name,callee.percent)
 
-    # f.view()
+    f.view()
     f.render()
 
 #vis_call_graph(call_tree, 'test')

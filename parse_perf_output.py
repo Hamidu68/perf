@@ -1,5 +1,7 @@
+from __future__ import print_function
 import re
 from ast import parse
+from visual_call_tree import vis_call_graph
 
 def is_valid_variable_name(name):
     try:
@@ -48,9 +50,44 @@ def parse_perf_output (Raw_Data,threshold):
     return list_nodes
 
 
-# file = "/home/hamid/phd/profiling/perf/All_Data.txt"
-# list_nodes = parse_perf_output(file,0.10)
-#
-# for node in list_nodes:
-#     print(node.name+" "+node.percent+" "+str(node.n_dash)+" "+str(node.dash))
+def build_tree(list_nodes):
+    list_prev =[]
+    i=0;
+    prev_index=0
+    while (i < len(list_nodes)-1):
+        current = list_nodes[i]
+        next = list_nodes[i+1]
+        if len(list_prev):
+            index = [index for index in range(0, len(list_nodes)) if (list_nodes[index].__eq__(list_prev[-1]))]# index of the head node for the stack of dads in the list_nodes!!!
 
+        if (current.n_dash < next.n_dash):
+            if (current.dash < next.dash):
+                list_nodes[i].kids.append(next)
+                list_prev.append(current)
+            elif (current.dash == current.dash):
+                list_nodes[index[0]].kids.append(next)
+        elif (current.n_dash == next.n_dash):
+            if (current.dash < next.dash):
+                list_nodes[i].kids.append(next)
+                list_prev.append(current)
+            elif (current.dash == next.dash): # do not change the prev
+                list_nodes[i].kids.append(next)
+        elif (current.n_dash > next.n_dash):
+            if (current.dash > next.dash):
+                list_nodes[index[0]].kids.append(next)
+                list_prev.pop()
+            elif (current.dash == next.dash):
+                list_nodes[i].kids.append(next)
+        i = i+1
+
+
+file = "/home/hamid/phd/profiling/perf/All_Data.txt"
+list_nodes = parse_perf_output(file,0.10)
+build_tree(list_nodes)
+for node in list_nodes:
+    print(node.name+":", end='')
+    for kid in node.kids:
+        print (kid.name+", ",end='')
+    print ("")
+
+vis_call_graph(list_nodes, 'test')

@@ -34,13 +34,13 @@ if not len(sys.argv) == 3:
     print len(sys.argv)
     print("error in argument: python run.py [benchdir] [bencname]")
     print("ex: python extractPareto.py /home/hamid/phd/profiling/newhope/newhope/ref/test/test_newhope newhope")
-    #exit()
+    exit()
 
-#BENCH_DIR = sys.argv[1]#"/home/hamid/phd/profiling/newhope/newhope/ref/test/test_newhope" #address to ob file
-#BNECH_NAME = sys.argv[2]#"newhope"
+BENCH_DIR = sys.argv[1]#"/home/hamid/phd/profiling/newhope/newhope/ref/test/test_newhope" #address to ob file
+BNECH_NAME = sys.argv[2]#"newhope"
 
-BENCH_DIR = "/home/hamid/phd/profiling/perf/bliss-b"
-BNECH_NAME = "bliss-b-test"
+# BENCH_DIR = "/home/hamid/phd/profiling/perf/bliss-b"
+# BNECH_NAME = "bliss-b-test"
 
 
 ToProfile = "cycles:u"#,instructions:u,cache-references:u,cache-misses:u"
@@ -50,7 +50,6 @@ CMD = "sudo perf record -e " + ToProfile + " -g -c "+ str(COUNT_EVENT)+ " " + BE
 Directory_Save_Results = "results/"+BNECH_NAME
 
 #directory for plots
-#Directory_Save_Plots = "plots/"+BNECH_NAME
 Directory_Save_Plots = Directory_Save_Results
 
 
@@ -84,5 +83,5 @@ Plot_All_Parameters(Avg,1,Avg_Events,Directory_Save_Plots)
 
 os.system("cp "+BENCH_DIR + " " + Directory_Save_Results )#save the obj file for the future!
 os.system("cp functions.txt "+ Directory_Save_Results )#save the obj file for the future!
-#os.system("sudo rm -f perf.data*")
-#os.system("sudo rm -f *.txt *.gz")
+os.system("sudo rm -f perf.data*")
+os.system("sudo rm -f *.txt *.gz")

@@ -26,7 +26,7 @@ class Node:
     def __eq__(self, other):
         return (self.name == other.name and self.percent ==other.percent)
 
-def parse_perf_output (Raw_Data,threshold):
+def parse_perf_output (Raw_Data):
     list_nodes = []
     with open(Raw_Data, 'r') as f:
        for line in f:
@@ -35,19 +35,21 @@ def parse_perf_output (Raw_Data,threshold):
            if ((line.__contains__("[.] main"))):
                while( not line.__contains__("|--")):#start of the tree
                    line = f.next()
-               while (line.__contains__("|")):
+               while (line.__contains__("|") or line.__contains__("--")): #read until reach end of main!!!
                    splitline = line.split() #ex: --17.95%-- char_pool_refresh
                    percent = (splitline[-2].replace("|","")).replace("--","")
                    name = splitline[-1]
                    dash = line.count("|")
+
                    line = f.next()
+                   if not line.__contains__("|"): #end of main!
+                       return list_nodes
                    while(is_valid_variable_name(line.split()[-1])): #read next dashes; sometimes we shoud ignore the next line!!!!! this function consumes neglible cycles (zero) in the perf!!
                        line=f.next()
                    n_dash = line.count("|") #dashes after the function
                    line = f.next()
-                   #if float(percent[:-1]) >= threshold :
                    list_nodes.append(Node(name, percent, n_dash, dash))
-    return list_nodes
+
 
 
 def build_tree(list_nodes):
@@ -94,9 +96,8 @@ def build_tree(list_nodes):
                 list_nodes[i].kids.append(next)
         i = i+1
 
-
-# file = "/home/hamid/phd/profiling/perf/All_Data.txt"
-# list_nodes = parse_perf_output(file,0.10)
+# file = "/home/hamid/phd/profiling/perf/results/new-hope-without-stack/All_Data.txt"
+# list_nodes = parse_perf_output(file)
 # build_tree(list_nodes)
 # for node in list_nodes:
 #     print(node.name+":", end='')

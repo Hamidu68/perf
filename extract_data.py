@@ -1,7 +1,17 @@
 from parse_perf_output import parse_perf_output, build_tree, vis_call_graph
 from config import *
 from bar_chart import Plot_Bar
-THRESHOLD = 0.10 # function with less that threshold will not be considered
+
+class Function:
+    def __init__(self,
+                 name, #name of the function
+                 inclusive_percent, #amount of cpu cycles spent in this function with the children
+                 exclusive_percent #amount of cpu cycles spent in this function without the children
+                 ):
+        self.name = name
+        self.inclusive_percent = inclusive_percent
+        self.exclusive_percent = exclusive_percent
+
 
 #print the dictionary which consists of all of the results
 def Print_All_Results(Final_Dict): #IS_Avg == 1: we need to plot average results, so Total_Events should be average!
@@ -76,9 +86,11 @@ def Plot_All_Parameters (Final_Dict,Is_Avg,Avg_Events,Directory_Save_Plots):
     file_func.close()
 
 def Read_Results (Raw_Data,COUNT_EVENT):
+    function_list = []
     newDict = {}
     RetDict = {}
     Final_Dict = {}
+    Final_function_list={}
     new_paramter = ""
     sorted_x = {}
     i = 0
@@ -107,12 +119,20 @@ def Read_Results (Raw_Data,COUNT_EVENT):
                RetDict [splitline[-1]] = [int(splitline[2])]
                sorted_x = sorted(RetDict.items(), key=operator.itemgetter(1), reverse=True)
 
+           if line.__contains__("[.]"):
+               splitline = line.split()
+               inclusive = splitline[0]
+               exclusive = splitline[1]
+               name = splitline[-1]
+               function_list.append(Function(name,inclusive,exclusive))
+
        # last paramtere!
        Final_Dict[new_paramter] = sorted_x
-    return Final_Dict
+       Final_function_list[new_paramter]=function_list #
+    return [function_list, Final_Dict]
 
 def Single_Run(Num_Run, All_Data,Directory_Save_Results,COUNT_EVENT):
-    Final_Dict = Read_Results(All_Data,COUNT_EVENT)
+    [function_list,Final_Dict] = Read_Results(All_Data,COUNT_EVENT)
 
     # to retrieve number of cache misses/cache references in each function!!!
     for key in Final_Dict.keys():
@@ -132,9 +152,21 @@ def Single_Run(Num_Run, All_Data,Directory_Save_Results,COUNT_EVENT):
     f_write.close()
     #Plot_All_Parameters(Final_Dict)
 
-    list_nodes = parse_perf_output("All_Data.txt", THRESHOLD)
+    list_nodes = parse_perf_output("All_Data.txt")
     build_tree(list_nodes)
-    vis_call_graph(list_nodes, write_dir+"_graph")
+
+    #concatinate name of the function with the exclusive and includsive profilling percentage
+    for key in Final_Dict.keys(): # e.g., key = Cycles
+        for func in function_list:
+            index = [index for index in range(0, len(list_nodes)) if (list_nodes[index].name ==(func.name))]  # index of the head node for the stack of dads in the list_nodes!!!
+            for i in index:
+                list_nodes[i].name = func.name+" ("+  func.inclusive_percent + ", "+ func.exclusive_percent+")"
+
+    vis_call_graph(list_nodes, write_dir+"_graph",THRESHOLD)
+    vis_call_graph(list_nodes, write_dir + "_graph_proned", 1)
 
 
     return Final_Dict
+
+
+

@@ -83,5 +83,7 @@ Plot_All_Parameters(Avg,1,Avg_Events,Directory_Save_Plots)
 
 os.system("cp "+BENCH_DIR + " " + Directory_Save_Results )#save the obj file for the future!
 os.system("cp functions.txt "+ Directory_Save_Results )#save the obj file for the future!
+os.system("cp perf.data "+ Directory_Save_Results )#save the obj file for the future!
+os.system("cp All_Data.txt "+ Directory_Save_Results )#save the obj file for the future!
 os.system("sudo rm -f perf.data*")
 os.system("sudo rm -f *.txt *.gz")

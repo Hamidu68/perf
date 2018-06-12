@@ -6,14 +6,15 @@ from graphviz import Digraph
 #              'e':[['g',9]]}
 
 
-def vis_call_graph(call_tree, fname):
+def vis_call_graph(call_tree, fname, threshold):
     f = Digraph('unix', filename=fname)
     f.attr(size='2,2')
     f.node_attr.update(color='lightblue2', style='filled')
 
     for caller in call_tree: #key is the caller function
         for callee in caller.kids:
-            f.edge(caller.name,callee.name,callee.percent)
+            if float(callee.percent[:-1]) > threshold:
+                f.edge(caller.name,callee.name,callee.percent)
 
  #   f.view()
     f.render()

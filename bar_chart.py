@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # a bar plot with errorbars
 import numpy as np
+import matplotlib
+matplotlib.use('pdf')
 import matplotlib.pyplot as plt
 import random
 

@@ -35,11 +35,12 @@ def parse_perf_output (Raw_Data, root_func):
            # read the call percentage for each function which is contain '[.]'. if there is no call to this function
            # ignore the line!
            if ((line.__contains__("[.] "+root_func))): #root_func: e.g., main
+               list_nodes.insert(0, Node(root_func, float(line.split()[0][:-1]), 0, 0))
                while( not line.__contains__("|--")):#start of the tree
                    line = f.next()
                while (line.__contains__("|") or line.__contains__("--")): #read until reach end of main!!!
                    splitline = line.split() #ex: --17.95%-- char_pool_refresh
-                   percent = (splitline[-2].replace("|","")).replace("--","")
+                   percent = float ((splitline[-2].replace("|","")).replace("--","")[:-1])
                    name = splitline[-1]
                    dash = line.count("|")
 
@@ -59,8 +60,8 @@ def build_tree(list_nodes, root_func):
     i=0;
 
     #first node can be the main()
-    list_nodes.insert(0,Node(root_func,"100",0,0))
-    list_prev.append(list_nodes[0])
+    # list_nodes.insert(0,Node(root_func,"100",0,0))
+    # list_prev.append(list_nodes[0])
 
     while (i < len(list_nodes)-1):
         current = list_nodes[i]
@@ -97,6 +98,15 @@ def build_tree(list_nodes, root_func):
             elif (current.dash == next.dash):
                 list_nodes[i].kids.append(next)
         i = i+1
+
+    # root_percent = 0
+    # for callee in list_nodes[0].kids:
+    #     root_percent = root_percent + float(callee.percent)
+
+
+    for caller in list_nodes:  # key is the caller function
+        for callee in caller.kids:
+            callee.percent = "{0:.2f}".format (100* float(callee.percent)/list_nodes[0].percent)
 
 # file = "/home/hamid/phd/profiling/perf/results/new-hope-without-stack/All_Data.txt"
 # list_nodes = parse_perf_output(file)

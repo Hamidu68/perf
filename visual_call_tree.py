@@ -12,11 +12,11 @@ def vis_call_graph(call_tree_in, fname, threshold):
     in_calls = {}
     for caller in call_tree:  # key is the caller function
         for callee in caller.kids:
-            caller.excl = caller.excl + float(callee.percent[:-1])
+            caller.excl = caller.excl + float(callee.percent)
             if callee.name not in in_calls.keys():
-                in_calls[callee.name] = float(callee.percent[:-1])
+                in_calls[callee.name] = float(callee.percent)
             else:
-                in_calls[callee.name] = in_calls[callee.name] + float(callee.percent[:-1])
+                in_calls[callee.name] = in_calls[callee.name] + float(callee.percent)
 
 
         if caller.name not in out_calls.keys():
@@ -36,8 +36,8 @@ def vis_call_graph(call_tree_in, fname, threshold):
 
     for caller in call_tree: #key is the caller function
         for callee in caller.kids:
-            if float(callee.percent[:-1]) > threshold:
-                f.edge(caller.name,callee.name,callee.percent)
+            if float(callee.percent) > threshold:
+                f.edge(caller.name,callee.name,str(callee.percent))
 
  #  f.view()
     f.render()

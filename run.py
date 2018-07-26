@@ -13,6 +13,7 @@ import random
 plt.close('all')
 MAX_FUNC = 20 # maximum number of functions that we need to analyze
 COUNT_EVENT = 10 # number of events to trigger a sample
+roots = ["main", "crypto_kem_dec", "crypto_kem_enc", "crypto_kem_keypair"]
 
 Variants = ["cycles"
             ,"cache-references"
@@ -34,13 +35,13 @@ if not len(sys.argv) == 3:
     print len(sys.argv)
     print("error in argument: python run.py [benchdir] [bencname]")
     print("ex: python extractPareto.py /home/hamid/phd/profiling/newhope/newhope/ref/test/test_newhope newhope")
-    exit()
+   # exit()
 
-BENCH_DIR = sys.argv[1]#"/home/hamid/phd/profiling/newhope/newhope/ref/test/test_newhope" #address to ob file
-BNECH_NAME = sys.argv[2]#"newhope"
+# BENCH_DIR = sys.argv[1]#"/home/hamid/phd/profiling/newhope/newhope/ref/test/test_newhope" #address to ob file
+# BNECH_NAME = sys.argv[2]#"newhope"
 
-# BENCH_DIR = "/home/hamid/phd/profiling/perf/bliss-b"
-# BNECH_NAME = "bliss-b-test"
+BENCH_DIR = "./test_kyber512"
+BNECH_NAME = "kyber512"
 
 
 ToProfile = "cycles:u"#,instructions:u,cache-references:u,cache-misses:u"
@@ -68,14 +69,16 @@ for i in range (0 , NUM_RUNS):
    print (CMD)
 
    os.system("sudo perf report -n > "+ All_Data)
+   os.system("mkdir -p "+ Directory_Save_Results+"/"+str(i))
 
-   Final_Dict = Single_Run(i,All_Data,Directory_Save_Results,COUNT_EVENT) # finla dict: the results which are written into the "Event" file
+
+   Final_Dict = Single_Run(i,All_Data,Directory_Save_Results+"/"+str(i),COUNT_EVENT,roots) # finla dict: the results which are written into the "Event" file
 
    print "Round "+str(i)+" is done"
 
    #for iteration number 0, we shoud create the dictionary
    [Avg, Avg_Events] = Avg_Results(Final_Dict,i,Avg,Avg_Events)
-   os.system("cp stdout.gz" + " " + Directory_Save_Results + "/stdout_"+str(i)+".gz" ) #save the stdout
+   os.system("cp stdout.gz" + " " + Directory_Save_Results+"/"+str(i) + "/stdout_"+str(i)+".gz" ) #save the stdout
 Print_All_Results (Avg)
 print Avg_Events
 Plot_All_Parameters(Avg,1,Avg_Events,Directory_Save_Plots)

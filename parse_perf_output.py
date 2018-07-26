@@ -21,18 +21,20 @@ class Node:
         self.percent = percent
         self.n_dash = n_dash
         self.dash = dash
+        self.incl = 0 #including percentage
+        self.excl = 0 #exclusing percentage
         self.kids = [] #keeps id of the kids!
 
     def __eq__(self, other):
         return (self.name == other.name and self.percent ==other.percent)
 
-def parse_perf_output (Raw_Data):
+def parse_perf_output (Raw_Data, root_func):
     list_nodes = []
     with open(Raw_Data, 'r') as f:
        for line in f:
            # read the call percentage for each function which is contain '[.]'. if there is no call to this function
            # ignore the line!
-           if ((line.__contains__("[.] main"))):
+           if ((line.__contains__("[.] "+root_func))): #root_func: e.g., main
                while( not line.__contains__("|--")):#start of the tree
                    line = f.next()
                while (line.__contains__("|") or line.__contains__("--")): #read until reach end of main!!!
@@ -52,12 +54,12 @@ def parse_perf_output (Raw_Data):
 
 
 
-def build_tree(list_nodes):
+def build_tree(list_nodes, root_func):
     list_prev =[]
     i=0;
 
-    #first node should be the main()
-    list_nodes.insert(0,Node("main","100",0,0))
+    #first node can be the main()
+    list_nodes.insert(0,Node(root_func,"100",0,0))
     list_prev.append(list_nodes[0])
 
     while (i < len(list_nodes)-1):

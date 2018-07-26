@@ -152,18 +152,19 @@ def Single_Run(Num_Run, All_Data,Directory_Save_Results,COUNT_EVENT):
     f_write.close()
     #Plot_All_Parameters(Final_Dict)
 
-    list_nodes = parse_perf_output("All_Data.txt")
-    build_tree(list_nodes)
+    list_nodes = parse_perf_output("All_Data.txt","crypto_kem_dec")
+    build_tree(list_nodes,"crypto_kem_dec")
 
     #concatinate name of the function with the exclusive and includsive profilling percentage
     for key in Final_Dict.keys(): # e.g., key = Cycles
         for func in function_list:
             index = [index for index in range(0, len(list_nodes)) if (list_nodes[index].name ==(func.name))]  # index of the head node for the stack of dads in the list_nodes!!!
             for i in index:
-                list_nodes[i].name = func.name+" ("+  func.inclusive_percent + ", "+ func.exclusive_percent+")"
+                list_nodes[i].name = func.name #+" ("+  func.inclusive_percent + ", "+ func.exclusive_percent+")"
 
+    list_nodes1 = list(list_nodes)
     vis_call_graph(list_nodes, write_dir+"_graph",THRESHOLD)
-    vis_call_graph(list_nodes, write_dir + "_graph_proned", 1)
+    vis_call_graph(list_nodes1, write_dir + "_graph_proned", 1)
 
 
     return Final_Dict

@@ -1,11 +1,15 @@
 from graphviz import Digraph
 from copy import deepcopy
 
-def vis_call_graph(call_tree_in, fname, threshold):
+def vis_call_graph(call_tree_in, fname, threshold, root_percent):
     call_tree = deepcopy(call_tree_in)
     f = Digraph('unix', filename=fname)
     f.node_attr.update(color='lightblue2', style='filled')
     f.attr(label="text inside each node: [function name] ([inclusive percentage], [exclusive percentage]]", size='2,2')
+
+    for caller in call_tree:  # key is the caller function
+        for callee in caller.kids:
+            callee.percent = "{0:.2f}".format (100* float(callee.percent)/root_percent)
 
 
     out_calls = {}

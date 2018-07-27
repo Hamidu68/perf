@@ -107,9 +107,9 @@ def Read_Results (Raw_Data,COUNT_EVENT):
                # new parameters that we have the samples!!!
                new_paramter =  splitline[-1][1:-3]
                nextline = f.next().split()
-               evencount =  int (nextline[-1])/COUNT_EVENT
-               new_paramter = new_paramter+" "+ str(evencount)
-               #evencount = int(splitline[2].replace("k", ""))  # 11k
+               event_count =  int (nextline[-1])/COUNT_EVENT
+               new_paramter = new_paramter+" "+ str(event_count)
+               #event_count = int(splitline[2].replace("k", ""))  # 11k
 
            # read the call percentage for each function which is contain '[.]'. if there is no call to this function
            # ignore the line!
@@ -129,10 +129,10 @@ def Read_Results (Raw_Data,COUNT_EVENT):
        # last paramtere!
        Final_Dict[new_paramter] = sorted_x
        Final_function_list[new_paramter]=function_list #
-    return [function_list, Final_Dict]
+    return [function_list, Final_Dict, event_count]
 
-def Single_Run(Num_Run, All_Data,Directory_Save_Results,COUNT_EVENT,roots):
-    [function_list,Final_Dict] = Read_Results(All_Data,COUNT_EVENT)
+def Single_Run(Num_Run, All_Data,Directory_Save_Results,COUNT_EVENT):
+    [function_list,Final_Dict,event_count] = Read_Results(All_Data,COUNT_EVENT)
 
     # to retrieve number of cache misses/cache references in each function!!!
     for key in Final_Dict.keys():
@@ -153,13 +153,25 @@ def Single_Run(Num_Run, All_Data,Directory_Save_Results,COUNT_EVENT,roots):
     #Plot_All_Parameters(Final_Dict)
 
 
+    jungle_nodes = {}
     #generate the graph for the specified function
     for root in roots:
-        list_nodes = parse_perf_output("All_Data.txt",root)
+        list_nodes = parse_perf_output("All_Data.txt",root,event_count)
         build_tree(list_nodes,root)
+        jungle_nodes[root] = list_nodes
 
-        # vis_call_graph(list_nodes, write_dir + "_" + root +"_graph",THRESHOLD)
-        vis_call_graph(list_nodes, write_dir + "_" + root + "_graph_proned", 1)
+        # vis_call_graph(list_nodes, write_dir + "_" + root +"_graph",THRESHOLD,list_nodes[0].percent)
+        vis_call_graph(list_nodes, write_dir + "_" + root + "_graph_proned", 1, list_nodes[0].percent)
+
+
+
+    for mix in mixed_profile.keys():
+        mixed = []
+        overal_percent = 0
+        for func in (mixed_profile[mix]):
+            mixed = mixed + jungle_nodes[func]
+            overal_percent = overal_percent + jungle_nodes[func][0].percent
+        vis_call_graph(mixed, write_dir + "_"+mix+"-mixed_graph_proned", 1, overal_percent)
 
 
     return Final_Dict

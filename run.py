@@ -13,7 +13,6 @@ import random
 plt.close('all')
 MAX_FUNC = 20 # maximum number of functions that we need to analyze
 COUNT_EVENT = 10 # number of events to trigger a sample
-roots = ["main", "crypto_kem_dec", "crypto_kem_enc", "crypto_kem_keypair"]
 
 Variants = ["cycles"
             ,"cache-references"
@@ -35,13 +34,13 @@ if not len(sys.argv) == 3:
     print len(sys.argv)
     print("error in argument: python run.py [benchdir] [bencname]")
     print("ex: python extractPareto.py /home/hamid/phd/profiling/newhope/newhope/ref/test/test_newhope newhope")
-   # exit()
+    exit()
 
-# BENCH_DIR = sys.argv[1]#"/home/hamid/phd/profiling/newhope/newhope/ref/test/test_newhope" #address to ob file
-# BNECH_NAME = sys.argv[2]#"newhope"
+BENCH_DIR = sys.argv[1]#"/home/hamid/phd/profiling/newhope/newhope/ref/test/test_newhope" #address to ob file
+BNECH_NAME = sys.argv[2]#"newhope"
 
-BENCH_DIR = "./test_kyber512"
-BNECH_NAME = "kyber512"
+# BENCH_DIR = "./test_kyber512"
+# BNECH_NAME = "kyber512"
 
 
 ToProfile = "cycles:u"#,instructions:u,cache-references:u,cache-misses:u"
@@ -72,7 +71,7 @@ for i in range (0 , NUM_RUNS):
    os.system("mkdir -p "+ Directory_Save_Results+"/"+str(i))
 
 
-   Final_Dict = Single_Run(i,All_Data,Directory_Save_Results+"/"+str(i),COUNT_EVENT,roots) # finla dict: the results which are written into the "Event" file
+   Final_Dict = Single_Run(i,All_Data,Directory_Save_Results+"/"+str(i),COUNT_EVENT) # finla dict: the results which are written into the "Event" file
 
    print "Round "+str(i)+" is done"
 
@@ -89,4 +88,4 @@ os.system("cp functions.txt "+ Directory_Save_Results )#save the obj file for th
 os.system("cp perf.data "+ Directory_Save_Results )#save the obj file for the future!
 os.system("cp All_Data.txt "+ Directory_Save_Results )#save the obj file for the future!
 os.system("sudo rm -f perf.data*")
-os.system("sudo rm -f *.txt *.gz")
+# os.system("sudo rm -f *.txt *.gz")

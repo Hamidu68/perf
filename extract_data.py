@@ -1,6 +1,8 @@
 from parse_perf_output import parse_perf_output, build_tree, vis_call_graph
 from config import *
 from bar_chart import Plot_Bar
+from copy import deepcopy
+
 
 class Function:
     def __init__(self,
@@ -16,7 +18,7 @@ class Function:
 #print the dictionary which consists of all of the results
 def Print_All_Results(Final_Dict): #IS_Avg == 1: we need to plot average results, so Total_Events should be average!
     f_write = open("Avg_Results", 'w')
-    for key in Final_Dict.keys():
+    for key in Final_Dict.keys(): #ex: key=cycles
 
         f_write.write("--- ")
         f_write.write(key + "\n")
@@ -81,7 +83,7 @@ def Plot_All_Parameters (Final_Dict,Is_Avg,Avg_Events,Directory_Save_Plots):
 
         Plot_Bar(value, min(MAX_FUNC, len(Final_Dict[key])), x_lable, y_lable, title, Total_Events)
 
-        plt.savefig(Directory_Save_Plots + "/" + (key) + '.pdf',format='eps', dpi=1000)
+        plt.savefig(Directory_Save_Plots + (key) + '.pdf',format='eps', dpi=1000)
 
     file_func.close()
 
@@ -131,6 +133,42 @@ def Read_Results (Raw_Data,COUNT_EVENT):
        Final_function_list[new_paramter]=function_list #
     return [function_list, Final_Dict, event_count]
 
+
+def calculate_exclusive(call_tree_in, root_percent):
+    call_tree = deepcopy(call_tree_in)
+    for caller in call_tree:  # key is the caller function
+        for callee in caller.kids:
+            callee.percent = "{0:.2f}".format (100* float(callee.percent)/root_percent)
+
+
+    out_calls = {}
+    in_calls = {}
+    for caller in call_tree:  # key is the caller function
+        for callee in caller.kids:
+            caller.excl = caller.excl + float(callee.percent)
+            if callee.name not in in_calls.keys():
+                in_calls[callee.name] = float(callee.percent)
+            else:
+                in_calls[callee.name] = in_calls[callee.name] + float(callee.percent)
+
+
+        if caller.name not in out_calls.keys():
+            out_calls[caller.name] = caller.excl
+        else:
+            out_calls[caller.name] = out_calls[caller.name] + caller.excl
+
+    for index in range(len(call_tree)):  # key is the caller function
+        caller = call_tree[index]
+        if caller.name in in_calls.keys():
+            caller.incl = in_calls[caller.name] - out_calls[caller.name]
+            call_tree_in[index].incl = caller.incl
+            caller.name = caller.name +"\n("+ str(in_calls[caller.name]) +","+ str(in_calls[caller.name]-out_calls[caller.name])+")"
+
+        else:
+            caller.name = caller.name + "\n" + str(out_calls[caller.name])
+
+    return call_tree
+
 def Single_Run(Num_Run, All_Data,Directory_Save_Results,COUNT_EVENT):
     [function_list,Final_Dict,event_count] = Read_Results(All_Data,COUNT_EVENT)
 
@@ -161,20 +199,15 @@ def Single_Run(Num_Run, All_Data,Directory_Save_Results,COUNT_EVENT):
         jungle_nodes[root] = list_nodes
 
         # vis_call_graph(list_nodes, write_dir + "_" + root +"_graph",THRESHOLD,list_nodes[0].percent)
-        vis_call_graph(list_nodes, write_dir + "_" + root + "_graph_proned", 1, list_nodes[0].percent)
+        to_draw = calculate_exclusive(list_nodes, list_nodes[0].percent)
+        vis_call_graph(to_draw, write_dir + "_" + root + "_graph_proned", 1)
 
 
 
-    for mix in mixed_profile.keys():
-        mixed = []
-        overal_percent = 0
-        for func in (mixed_profile[mix]):
-            mixed = mixed + jungle_nodes[func]
-            overal_percent = overal_percent + jungle_nodes[func][0].percent
-        vis_call_graph(mixed, write_dir + "_"+mix+"-mixed_graph_proned", 1, overal_percent)
 
 
-    return Final_Dict
+
+    return [Final_Dict,jungle_nodes]
 
 
 

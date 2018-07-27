@@ -8,11 +8,11 @@ def Avg_Results(Final_Dict, iteration, Avg,Avg_Events):
     for key_j in Final_Dict.keys():
         Dict = Final_Dict[key_j]
         key = key_j.split()[0] #ex: key = cach-misses
-
         if iteration == 0:#just to initialize!!! when it's the first time!!
             Tmp_Avg_Events[key] = 0
             Avg_Stats = Dict
         else:
+
             Avg_Stats = Avg[key]
             Tmp_Avg_Events[key] = Avg_Events[key]
         Tmp_Avg_Events[key] = int (float(Tmp_Avg_Events[key]*iteration + int((key_j.split()[1])))/(iteration+1))

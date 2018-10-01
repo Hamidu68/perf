@@ -7,7 +7,7 @@ It also generate barcharts for different functions or mixes.
 
 You should change `config.py` file in order to change the functions to be profiled and the mixed functions (client and server).
 
-**compile Flags**
+# compile Flags
 -No compiler optimizations (eliminate -O3, ...)
 -Compiler with `-g` flag
 -Do not elimiate `frame_pointers`
@@ -20,14 +20,18 @@ and here are the prefered flags:
 ```
 CFLAGS = -g -Wall -Wextra -march=native
 ```
+
 ----------------------------------------
-**example**
-examples for DATE paper can be found in `perf-2018-DATE` folder.
+# Examples
+
+Examples for DATE paper can be found in [perf-2018-DATE](https://github.com/Hamidu68/perf/tree/master/perf-2018-DATE) folder.
+
 -----------------------------------------
 
-**config.py**
 
-First specify number of runs to get the average over all of them.
+# config.py
+
+First specify number of runs to get the average over all of them in the [config.py](https://github.com/Hamidu68/perf/blob/master/config.py) file.
 ```NUM_RUNS = 5
 ```
 

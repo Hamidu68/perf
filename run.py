@@ -59,11 +59,11 @@ if not len(sys.argv) == 3:
     print("ex: python extractPareto.py /home/hamid/phd/profiling/newhope/newhope/ref/test/test_newhope newhope")
     # exit()
 
-# BENCH_DIR = sys.argv[1]#"/home/hamid/phd/profiling/newhope/newhope/ref/test/test_newhope" #address to ob file
-# BNECH_NAME = sys.argv[2]#"newhope"
+BENCH_DIR = sys.argv[1]#"/home/hamid/phd/profiling/newhope/newhope/ref/test/test_newhope" #address to ob file
+BNECH_NAME = sys.argv[2]#"newhope"
 
-BENCH_DIR = "./test_kyber512"
-BNECH_NAME = "kyber512"
+# BENCH_DIR= "/home/hamid/phd/profiling/perf-2018-DATE/dilithium_recommended/dilithium_recommended dilithium_recommended"
+# BNECH_NAME="dilithium_recommended"
 
 
 ToProfile = "cycles:u"#,instructions:u,cache-references:u,cache-misses:u"

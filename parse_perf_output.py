@@ -47,6 +47,17 @@ def parse_perf_output (Raw_Data, root_func, event_count):
                    line = f.next()
                    if not line.__contains__("|"): #end of main!
                        return list_nodes
+
+                    # sometimes a function calls another one imediately so we should just consider the last one
+                   if (not line.__contains__("--")):
+                       while (True): #do it till we cosider all the immedite function calls
+                            if re.search('[a-zA-Z]+',line) : # if the function is directly call another function immediately
+                               name=line.split()[-1]
+                               line = f.next()
+                            else :
+                                break #no immediate calls remain.
+
+
                    while(is_valid_variable_name(line.split()[-1])): #read next dashes; sometimes we shoud ignore the next line!!!!! this function consumes neglible cycles (zero) in the perf!!
                        line=f.next()
                    n_dash = line.count("|") #dashes after the function
@@ -99,13 +110,13 @@ def build_tree(list_nodes, root_func):
     # for callee in list_nodes[0].kids:
     #     root_percent = root_percent + float(callee.percent)
 
-# file = "/home/hamid/phd/profiling/perf/results/new-hope-without-stack/All_Data.txt"
-# list_nodes = parse_perf_output(file)
+# file = "/home/hamid/phd/profiling/perf/results/dilithium_recommended/All_Data.txt"
+# list_nodes = parse_perf_output(file,"crypto_sign_open",100000)
 # build_tree(list_nodes)
 # for node in list_nodes:
 #     print(node.name+":", end='')
 #     for kid in node.kids:
 #         print (kid.name+", ",end='')
 #     print ("")
-#
+
 # vis_call_graph(list_nodes, 'test')

@@ -12,7 +12,7 @@ You should change `config.py` file in order to change the functions to be profil
 - Compiler with `-g` flag
 - Do not elimiate `frame_pointers`
 
-for example these are the flags from NIST dilithium:
+for example these are the flags from NIST [dilithium](https://github.com/Hamidu68/perf/blob/master/perf-2018-DATE/dilithium_recommended/Makefile):
 ```
 CFLAGS = -Wall -Wextra -march=native -mtune=native -O3 -fomit-frame-pointer
 ```
@@ -20,6 +20,8 @@ and here are the prefered flags:
 ```
 CFLAGS = -g -Wall -Wextra -march=native
 ```
+
+**note**: Make sure to run the scheme enough times to get the better results [example](https://github.com/Hamidu68/perf/blob/master/perf-2018-DATE/dilithium_recommended/src/main.c).
 
 ----------------------------------------
 # Examples

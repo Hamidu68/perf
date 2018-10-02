@@ -8,9 +8,9 @@ It also generate barcharts for different functions or mixes.
 You should change `config.py` file in order to change the functions to be profiled and the mixed functions (client and server).
 
 # compile Flags
--No compiler optimizations (eliminate -O3, ...)
--Compiler with `-g` flag
--Do not elimiate `frame_pointers`
+- No compiler optimizations (eliminate -O3, ...)
+- Compiler with `-g` flag
+- Do not elimiate `frame_pointers`
 
 for example these are the flags from NIST dilithium:
 ```

@@ -2,6 +2,7 @@ from parse_perf_output import parse_perf_output, build_tree, vis_call_graph
 from config import *
 from bar_chart import Plot_Bar
 from copy import deepcopy
+from pie_chart import *
 
 
 class Function:
@@ -80,10 +81,15 @@ def Plot_All_Parameters (Final_Dict,Is_Avg,Avg_Events,Directory_Save_Plots):
         title = key+ str (Avg_Events[key])
         #  Total_Events[key] = int(filter(str.isdigit, key))
         # if key.__contains__("cache-misses"):
-
+        
+        
         Plot_Bar(value, min(MAX_FUNC, len(Final_Dict[key])), x_lable, y_lable, title, Total_Events)
-
         plt.savefig(Directory_Save_Plots + (key) + '.pdf',format='eps', dpi=1000)
+        
+        # Modifications: Plot pie chart
+        image_name=Directory_Save_Plots + (key)    
+        plot_pie( image_name, x_lable, value, Total_Events[0])
+       
 
     file_func.close()
 

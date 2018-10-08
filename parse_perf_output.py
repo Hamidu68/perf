@@ -39,7 +39,7 @@ def parse_perf_output (Raw_Data, root_func, event_count):
                while( not line.__contains__("|--")):#start of the tree
                    line = f.next()
                while (line.__contains__("|") or line.__contains__("--")): #read until reach end of main!!!
-                   splitline = line.split() #ex: --17.95%-- char_pool_refresh
+                   splitline = line.split("--") #ex: --17.95%-- char_pool_refresh # Modification added to split line based on '--'
                    percent = float ((splitline[-2].replace("|","")).replace("--","")[:-1])*event_count/100
                    name = splitline[-1]
                    dash = line.count("|")

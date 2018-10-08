@@ -80,6 +80,8 @@ os.system("rm -rf "+ Directory_Save_Plots)
 os.system("mkdir -p "+ Directory_Save_Plots)
 os.system("sudo rm -f perf.data*")
 
+
+
 Avg = {}
 Avg_Events = {}
 All_Data = "All_Data.txt"
@@ -92,8 +94,7 @@ mix_to_plot = {}
 for i in range (0 , NUM_RUNS):
    os.system(CMD)
    print (CMD)
-
-   os.system("sudo perf report -n > "+ All_Data)
+   os.system("sudo perf report -fn > "+ All_Data) # Modification: Added flag -f which is needed in some system
    os.system("mkdir -p "+ Directory_Save_Results+"/"+str(i))
    write_dir = Directory_Save_Results+"/"+str(i)+"/"
 
